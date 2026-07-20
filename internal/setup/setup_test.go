@@ -1172,11 +1172,17 @@ func TestInjectOpenCodeMCPConfigErrors(t *testing.T) {
 
 func TestDefaultRunCommandExecutes(t *testing.T) {
 	resetSetupSeams(t)
-	out, err := runCommand("sh", "-c", "printf ok")
+	name := "sh"
+	args := []string{"-c", "printf ok"}
+	if runtimeGOOS == "windows" {
+		name = "cmd.exe"
+		args = []string{"/c", "echo", "ok"}
+	}
+	out, err := runCommand(name, args...)
 	if err != nil {
 		t.Fatalf("expected default runCommand to execute, got %v", err)
 	}
-	if string(out) != "ok" {
+	if strings.TrimSpace(string(out)) != "ok" {
 		t.Fatalf("unexpected output: %q", string(out))
 	}
 }

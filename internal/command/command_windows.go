@@ -1,6 +1,6 @@
 //go:build windows
 
-package project
+package command
 
 import (
 	"context"
@@ -8,7 +8,8 @@ import (
 	"syscall"
 )
 
-func newProjectCommandContext(ctx context.Context, name string, args ...string) *exec.Cmd {
+// NewContext creates a command without showing a console window.
+func NewContext(ctx context.Context, name string, args ...string) *exec.Cmd {
 	cmd := exec.CommandContext(ctx, name, args...)
 	cmd.SysProcAttr = &syscall.SysProcAttr{HideWindow: true}
 	return cmd

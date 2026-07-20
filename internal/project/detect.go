@@ -14,6 +14,8 @@ import (
 	"path/filepath"
 	"strings"
 	"time"
+
+	"github.com/Gentleman-Programming/engram/internal/command"
 )
 
 // ErrAmbiguousProject is returned when the working directory is a parent of
@@ -278,7 +280,7 @@ func detectGitRootDir(dir string) string {
 	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
 	defer cancel()
 
-	cmd := newProjectCommandContext(ctx, "git", "-C", dir, "rev-parse", "--show-toplevel")
+	cmd := command.NewContext(ctx, "git", "-C", dir, "rev-parse", "--show-toplevel")
 	out, err := cmd.Output()
 	if err != nil {
 		return ""
@@ -377,7 +379,7 @@ func detectFromGitRemote(dir string) string {
 	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
 	defer cancel()
 
-	cmd := newProjectCommandContext(ctx, "git", "-C", dir, "remote", "get-url", "origin")
+	cmd := command.NewContext(ctx, "git", "-C", dir, "remote", "get-url", "origin")
 	out, err := cmd.Output()
 	if err != nil {
 		return ""

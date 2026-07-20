@@ -8,6 +8,8 @@ import (
 	"os/exec"
 	"regexp"
 	"strings"
+
+	"github.com/Gentleman-Programming/engram/internal/command"
 )
 
 // ─── ClaudeRunner ─────────────────────────────────────────────────────────────
@@ -21,8 +23,8 @@ type ClaudeRunner struct {
 	runCLI func(ctx context.Context, name string, args []string, stdin string) ([]byte, error)
 }
 
-// NewClaudeRunner constructs a ClaudeRunner with the real exec.CommandContext
-// implementation. Tests should inject a fake via the struct field directly.
+// NewClaudeRunner constructs a ClaudeRunner with the real command implementation.
+// Tests should inject a fake via the struct field directly.
 func NewClaudeRunner() *ClaudeRunner {
 	return &ClaudeRunner{runCLI: defaultRunCLI}
 }
@@ -137,7 +139,7 @@ func parseClaudeEnvelope(raw []byte) (Verdict, error) {
 // standard input, and returns the combined stdout+stderr output.
 // It translates exec.ErrNotFound into ErrCLINotInstalled.
 func defaultRunCLI(ctx context.Context, name string, args []string, stdin string) ([]byte, error) {
-	cmd := exec.CommandContext(ctx, name, args...)
+	cmd := command.NewContext(ctx, name, args...)
 	cmd.Stdin = strings.NewReader(stdin)
 	out, err := cmd.Output()
 	if err != nil {
